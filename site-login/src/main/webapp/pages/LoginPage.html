@@ -51,7 +51,7 @@ function loginSuccessHandler(successJson)
    	 	$("#closeBtn").trigger("click");
    	 	$("#rightNavbarID").hide();
 		$("#logoutId").show();
-		MODEL.userLoggedIn = 1;
+		sessionStorage.userLoggedIn = 1;
 		setRegisterServicePage();
     }else if (successJson.userAuthenticated == 'false')
     {

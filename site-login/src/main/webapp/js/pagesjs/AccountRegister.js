@@ -27,6 +27,8 @@ function AccountRegister()
 		{
 			$('#emailRegAlertID').show();
 			document.getElementById("signupForm").reset();
+			$('#fieldsRequireID').hide();
+			$('#signupForm').hide();
 		}else {
 			
 			$('#emailExistAlertID').show();
