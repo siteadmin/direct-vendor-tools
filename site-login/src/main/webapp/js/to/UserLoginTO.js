@@ -1,5 +1,5 @@
 function UserLoginTO()
 {
-	this.userName;
+	this.username;
 	this.password;
 }

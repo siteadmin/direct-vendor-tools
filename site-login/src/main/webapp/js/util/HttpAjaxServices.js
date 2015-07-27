@@ -2,16 +2,41 @@ function HttpAjaxServices()
 {
 	var currentObject = this;
 	
-	this.REGISTER_ACCOUNT = APP_CONTEXT+"rs/accountRegisterService/registerAccount?isJSon=true";
-	this.CHECK_EMAIL = APP_CONTEXT+"rs/accountRegisterService/checkEmailAvailability?isJSon=true";
-	this.LOGIN_AUTH = APP_CONTEXT+"rs/loginService/validateLogin?isJSon=true";
-	this.REGISTER_DIRECT_SYSTEM = APP_CONTEXT+"rs/registerService/registerDirectSystem?isJSon=true";
-	this.UPDATE_DIRECT_SYSTEM = APP_CONTEXT+"rs/registerService/updateDirectSystem?isJSon=true";
-	this.READ_ALL_DIRECT_SYSTEM = APP_CONTEXT+"rs/registerService/readAllDirectSystem?isJSon=true";
-	this.READ_ALL_CERTS = APP_CONTEXT + "rs/fileService/readAllCerts?directEndPoint=";
-	this.DOWNLOAD_CERT = APP_CONTEXT+"rs/fileService/downloadCert";
-	this.DELETE_CERT = APP_CONTEXT+"rs/fileService/deleteCert?filePath=";
+	this.REGISTER_ACCOUNT = APP_CONTEXT+"usersignup";
+	this.CHECK_EMAIL = APP_CONTEXT+"checkUserName?username=";
+	this.LOGIN_AUTH = APP_CONTEXT+"userlogin";
+	this.VALIDATE_DIRECT_SYS = APP_CONTEXT + "validatedirecttransporttestingservice?directEmailAddress=";
+	this.REGISTER_DIRECT_SYSTEM = APP_CONTEXT+"directtransporttestingservice";
+	this.UPDATE_DIRECT_SYSTEM = APP_CONTEXT+"updateDirectSystem";
+	this.READ_ALL_DIRECT_SYSTEM = APP_CONTEXT+"directtransporttestingservice";
+	this.READ_ALL_CERTS = APP_CONTEXT + "readAllCerts?directEndPoint=";
+	this.DOWNLOAD_CERT = APP_CONTEXT+"downloadCert";
+	this.DELETE_CERT = APP_CONTEXT+"deleteCert?filePath=";
 	
+	
+	this.checkUsername = function(username,callback,freezeScreen,screenFreezeMessage)
+	{
+		var utility = new Utility();
+		if(freezeScreen)
+		{
+			if(utility.isEmptyString(screenFreezeMessage))
+			   screenFreezeMessage =  "Processing. Please wait...";
+			   UTILITY.screenFreeze(screenFreezeMessage);
+		}
+		$.ajax({type:"GET",
+			url: currentObject.CHECK_EMAIL+username,
+			cache: false,
+			datatype : CONSTANTS.DATA_TYP_JSON,
+			contentType: CONSTANTS.CONTENT_TYP_JSON,
+			success:function (successJson, textStatus, oHTTP){
+				callback.fire(successJson); 
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown)
+			{
+				alert("Error Calling Service","Error");
+			}
+		});
+	};
 	
 	this.registerAccount = function(accountRegisterTO,callback,freezeScreen,screenFreezeMessage)
 	{
@@ -29,12 +54,6 @@ function HttpAjaxServices()
 			datatype : CONSTANTS.DATA_TYP_JSON,
 			contentType: CONSTANTS.CONTENT_TYP_JSON,
 			success:function (successJson, textStatus, oHTTP){
-			if(parseInt(successJson.returnCode)!=0)
-			{
-				alert(successJson.error.errorMessage,"Error");
-				return;
-			}
-			else
 				callback.fire(successJson); 
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -60,12 +79,41 @@ function HttpAjaxServices()
 			datatype : CONSTANTS.DATA_TYP_JSON,
 			contentType: CONSTANTS.CONTENT_TYP_JSON,
 			success:function (successJson, textStatus, oHTTP){
-			if(parseInt(successJson.returnCode)!=0)
+				callback.fire(successJson); 
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown)
 			{
-				alert(successJson.error.errorMessage,"Error");
-				return;
+				if(errorThrown == "Unauthorized")
+				{
+					callback.fire("");	
+				}else
+				{
+					alert("Error Calling Service","Error");	
+				}
+				
 			}
-			else
+		});
+	};
+	
+	this.validateDirectSystem = function(directEmailAddress,callback,freezeScreen,register)
+	{
+		var utility = new Utility();
+		if(freezeScreen)
+		{
+			if(utility.isEmptyString(screenFreezeMessage))
+			   screenFreezeMessage =  "Processing. Please wait...";
+			   UTILITY.screenFreeze(screenFreezeMessage);
+		}
+		
+		$.ajax({type:"GET",
+			url: currentObject.VALIDATE_DIRECT_SYS+directEmailAddress,
+			cache: false,
+			datatype : CONSTANTS.DATA_TYP_JSON,
+			contentType: CONSTANTS.CONTENT_TYP_JSON,
+			beforeSend: function(xhr){
+		        xhr.setRequestHeader("X-Auth-Token", sessionStorage.authToken);
+		    },
+			success:function (successJson, textStatus, oHTTP){
 				callback.fire(successJson); 
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -79,6 +127,8 @@ function HttpAjaxServices()
 	{
 		var URL = "";
 		var utility = new Utility();
+		/*var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");*/
 		if(freezeScreen)
 		{
 			if(utility.isEmptyString(screenFreezeMessage))
@@ -93,19 +143,16 @@ function HttpAjaxServices()
 		{
 			URL = currentObject.UPDATE_DIRECT_SYSTEM;
 		}
-		$.ajax({type:"POST",
+		$.ajax({type:"PUT",
 			data:JSON.stringify(registerServiceTO),
 			url: URL,
 			cache: false,
 			datatype : CONSTANTS.DATA_TYP_JSON,
 			contentType: CONSTANTS.CONTENT_TYP_JSON,
+			beforeSend: function(xhr){
+		        xhr.setRequestHeader("X-Auth-Token", sessionStorage.authToken);
+		    },
 			success:function (successJson, textStatus, oHTTP){
-			if(parseInt(successJson.returnCode)!=0)
-			{
-				alert(successJson.error.errorMessage,"Error");
-				return;
-			}
-			else
 				callback.fire(successJson); 
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -122,7 +169,7 @@ function HttpAjaxServices()
 		var URL = "";
 		if(!utility.isEmptyString(userEmail))
 		{
-			URL = currentObject.READ_ALL_DIRECT_SYSTEM + "&userEmail=" + userEmail;
+			URL = currentObject.READ_ALL_DIRECT_SYSTEM + "?useremail=" + userEmail;
 		}else 
 		{
 			URL = currentObject.READ_ALL_DIRECT_SYSTEM;
@@ -140,12 +187,6 @@ function HttpAjaxServices()
 			datatype : CONSTANTS.DATA_TYP_JSON,
 			contentType: CONSTANTS.CONTENT_TYP_JSON,
 			success:function (successJson, textStatus, oHTTP){
-			if(parseInt(successJson.returnCode)!=0)
-			{
-				alert(successJson.error.errorMessage,"Error");
-				return;
-			}
-			else
 				callback.fire(successJson); 
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -200,6 +241,9 @@ function HttpAjaxServices()
 			cache: false,
 			datatype : CONSTANTS.DATA_TYP_JSON,
 			contentType: CONSTANTS.CONTENT_TYP_JSON,
+			beforeSend: function(xhr){
+		        xhr.setRequestHeader("X-Auth-Token", sessionStorage.authToken);
+		    },
 			success:function (successJson, textStatus, oHTTP){
 			if(parseInt(successJson.returnCode)!=0)
 			{

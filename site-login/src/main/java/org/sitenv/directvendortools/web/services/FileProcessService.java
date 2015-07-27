@@ -1,4 +1,4 @@
-package org.sitenv.directvendortools.web.bl;
+package org.sitenv.directvendortools.web.services;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,15 +10,19 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sitenv.directvendortools.web.dto.CertAnchorTO;
-import org.sitenv.directvendortools.web.dto.ResultSetTO;
+import org.sitenv.directvendortools.web.entities.CertAnchor;
 import org.sitenv.directvendortools.web.util.ApplicationConstants;
+import org.sitenv.directvendortools.web.util.ResultSetTO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
-public class FileProcess {
+@Service
+@Transactional
+public class FileProcessService {
 
 	// save uploaded file to new location
-	public static void writeToFile(InputStream uploadedInputStream, File file)
+	public void writeToFile(InputStream uploadedInputStream, File file)
 			throws IOException {
 		OutputStream out = null;
 
@@ -40,7 +44,7 @@ public class FileProcess {
 		}
 	}
 	
-	public static ResultSetTO readAllCerts(String directEndPoint)
+	public ResultSetTO readAllCerts(String directEndPoint)
 			throws IOException {
 		
 		final ResultSetTO resultSet = new ResultSetTO();
@@ -51,16 +55,16 @@ public class FileProcess {
 		String uploadedTimestamp;
 		if(listOfFiles != null)
 		{
-			List<CertAnchorTO> allCerts = new ArrayList<CertAnchorTO>();
-			CertAnchorTO certAnchorTO = null;
+			List<CertAnchor> allCerts = new ArrayList<CertAnchor>();
+			CertAnchor certAnchor = null;
 			for (int i = 0; i < listOfFiles.length; i++) {
-				certAnchorTO = new CertAnchorTO();
-				certAnchorTO.setCertFile(listOfFiles[i].getName());
-				certAnchorTO.setAbsolutePath(listOfFiles[i].getAbsolutePath());
+				certAnchor = new CertAnchor();
+				certAnchor.setCertFile(listOfFiles[i].getName());
+				certAnchor.setAbsolutePath(listOfFiles[i].getAbsolutePath());
 				uploadedTimestamp = Files.readAttributes(listOfFiles[i].toPath(), 
 							BasicFileAttributes.class).creationTime().toString();
-				certAnchorTO.setUploadedTimeStamp(uploadedTimestamp);
-				allCerts.add(certAnchorTO);
+				certAnchor.setUploadedTimeStamp(uploadedTimestamp);
+				allCerts.add(certAnchor);
 			}
 			resultSet.getResults().addAll(allCerts);
 		}

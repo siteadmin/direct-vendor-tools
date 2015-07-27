@@ -35,7 +35,7 @@ $(document).ready(function() {
 function userLogin()
 {
 	var userLoginTO = new UserLoginTO();
-	userLoginTO.userName =  $("#userName").val();
+	userLoginTO.username =  $("#userName").val();
 	userLoginTO.password =  $("#password").val();
 	MODEL.userEmail = $("#userName").val();
 	var callbackFunction = $.Callbacks('once');
@@ -46,14 +46,15 @@ function userLogin()
 
 function loginSuccessHandler(successJson)
 {
-	if(successJson.userAuthenticated == 'true')
+	if(successJson != "")
     {
    	 	$("#closeBtn").trigger("click");
    	 	$("#rightNavbarID").hide();
 		$("#logoutId").show();
 		sessionStorage.userLoggedIn = 1;
 		setRegisterServicePage();
-    }else if (successJson.userAuthenticated == 'false')
+		sessionStorage.authToken = successJson;
+    }else
     {
     	$("#passwordErrorId").show();
     }		

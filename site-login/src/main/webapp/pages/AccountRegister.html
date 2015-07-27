@@ -26,7 +26,7 @@
 
 		$("#submitBtn").click(function(e) {
 			if($("#signupForm").parsley().validate()){
-				accountRegister.registerAccount();
+				accountRegister.checkUserName();
 			}
 		});
 	});

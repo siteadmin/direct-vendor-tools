@@ -8,30 +8,28 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public abstract class SaltedPasswordHashUtil {
-	
-	public static void main(String args[]) 
-	{
-		try
-		{
-			String sp = getSecurePassword("power", 32);
-		
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-			System.out.println("Password secured: " + sp.toString());
-			
-			Boolean vp = validatePassword("power", sp);
-		
-			System.out.println("Password validated: " + vp.toString());
-		}
-		catch (HashException he) 
-		{
-			he.printStackTrace();
-		}
+public class SaltedPasswordHashUtil implements PasswordEncoder{
+	
+
+	@Override
+	public String encode(CharSequence rawPassword) {
+	      return getSecurePassword(rawPassword.toString(), 32);
 	}
 
-	public static String getSecurePassword(String password, int saltLength)  throws HashException
+
+	@Override
+	public boolean matches(CharSequence rawPassword, String encodedPassword) {
+		// TODO Auto-generated method stub
+		return validatePassword(rawPassword.toString(), encodedPassword);
+	}
+	
+	public String getSecurePassword(String password, int saltLength) 
 	{
 		// Create random salt
+		
+		String securePassowrd = null;
 		try 
 		{
 			String salt = generateSalt(saltLength);
@@ -41,13 +39,15 @@ public abstract class SaltedPasswordHashUtil {
 		}
 		catch(Exception e)
 		{
-			throw new HashException(e);
+			securePassowrd = "";
 		}
+		
+		return securePassowrd;
 		
 	}
 	
 	
-	private static String getSecurePassword(String password, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException
+	private String getSecurePassword(String password, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException
 	{
 		int iterations = 1000;
         char[] chars = password.toCharArray();
@@ -59,7 +59,7 @@ public abstract class SaltedPasswordHashUtil {
         return iterations + ":" + toHex(saltBytes) + ":" + toHex(hash);
 	}
 	
-	private static String generateSalt(int saltLength) throws NoSuchAlgorithmException
+	private String generateSalt(int saltLength) throws NoSuchAlgorithmException
 	{
 		
 		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
@@ -71,7 +71,7 @@ public abstract class SaltedPasswordHashUtil {
 		
 	}
 	
-	private static String toHex(byte[] array) throws NoSuchAlgorithmException
+	private String toHex(byte[] array) throws NoSuchAlgorithmException
     {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
@@ -84,8 +84,9 @@ public abstract class SaltedPasswordHashUtil {
         }
     }
 	
-	public static boolean validatePassword(String originalPassword, String storedPassword) throws HashException
+	public  boolean validatePassword(String originalPassword, String storedPassword)
     {
+		boolean validated = false;
 		try
 		{
 	        String[] parts = storedPassword.split(":");
@@ -102,16 +103,17 @@ public abstract class SaltedPasswordHashUtil {
 	        {
 	            diff |= hash[i] ^ testHash[i];
 	        }
-	        return diff == 0;
+	        validated = diff == 0 ? true :false;
    
 		}
 		catch (Exception e) 
 		{
-			throw new HashException(e);
+			
 		}
+		return validated;
     }
 
-    private static byte[] fromHex(String hex) throws NoSuchAlgorithmException
+    private byte[] fromHex(String hex) throws NoSuchAlgorithmException
     {
         byte[] bytes = new byte[hex.length() / 2];
         for(int i = 0; i<bytes.length ;i++)
@@ -120,6 +122,7 @@ public abstract class SaltedPasswordHashUtil {
         }
         return bytes;
     }
-	
+
+
 	
 }

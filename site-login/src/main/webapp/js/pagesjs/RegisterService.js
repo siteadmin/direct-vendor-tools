@@ -6,7 +6,29 @@ function RegisterService()
 	this.editingSystemID = 0;
 	this.directEndPoint = "";
 	this.selectedFile = "";
-	this.UPLOAD_FILE = APP_CONTEXT + "rs/fileService/uploadCert?directEndPoint=";
+	this.UPLOAD_FILE = APP_CONTEXT + "uploadCert?directEndPoint=";
+	
+	this.validateService = function()
+	{
+		$('#directEmailExistAlertID').hide();
+		var callbackFunction = $.Callbacks('once');
+		callbackFunction.add(currentObject.validateServiceSuccessHandler);
+		var httpService = new HttpAjaxServices();
+		httpService.validateDirectSystem($("#directEmail").val(), callbackFunction, false);
+	};
+	
+	this.validateServiceSuccessHandler = function(successJson)
+	{
+		if(successJson)
+		{
+			currentObject.registerService();
+			
+		}else 
+		{
+			$('#directEmailExistAlertID').show();
+		}
+	};
+	
 	this.registerService = function()
 	{
 		var callbackFunction = $.Callbacks('once');
@@ -17,7 +39,6 @@ function RegisterService()
 	
 	this.readValues = function()
 	{
-		$('#directEmailExistAlertID').hide();
 		var registerServiceTO = new RegisterServiceTO();
 		registerServiceTO.cehrtLabel =  $("#cehrtLabel").val();
 		registerServiceTO.organizationName =  $("#orgName").val();
@@ -44,17 +65,10 @@ function RegisterService()
 	
 	this.registerServiceSuccessHandler = function(successJson)
 	{
-		if(successJson.booleanOutput)
-		{
 			$("#vendorReg").show();
 			$('#registrationModal').modal('hide');
 			$('#DirectSystemRegAlertID').show();
 			registerService.readUserDirectSystems();
-			
-		}else 
-		{
-			$('#directEmailExistAlertID').show();
-		}
 	};
 	
 	this.updateServiceSuccessHandler = function(successJson)
@@ -82,7 +96,7 @@ function RegisterService()
 	
 	this.readAllDirectSystemsSuccessHandler = function(successJson)
 	{
-		var resultArray = successJson.resultSet.results;
+		var resultArray = successJson;
 		currentObject.resultSet = resultArray;
 		var rows = "";
 		 $(resultArray).each(function(){
@@ -142,7 +156,7 @@ function RegisterService()
 	this.readUserDirectSystemsSuccessHandler = function(successJson)
 	{
 		$("#userDirectSysTableBody").empty();
-		var resultArray = successJson.resultSet.results;
+		var resultArray = successJson;
 		currentObject.resultSet = resultArray;
 		var rows = "";
 		 $(resultArray).each(function(){
@@ -306,6 +320,9 @@ function RegisterService()
 			type : 'POST',
 			contenttype : false,
 			replaceFileInput : false,
+			beforeSend: function(xhr){
+		        xhr.setRequestHeader("X-Auth-Token", sessionStorage.authToken);
+		    },
 			done : function(e, data) {
 				
 				$('#anchoruploadform').trigger('reset');

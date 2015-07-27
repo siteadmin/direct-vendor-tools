@@ -1,4 +1,4 @@
-package org.sitenv.directvendortools.web.dto;
+package org.sitenv.directvendortools.web.util;
 
 import java.util.ArrayList;
 import java.util.List;
