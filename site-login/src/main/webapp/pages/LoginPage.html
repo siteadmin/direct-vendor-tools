@@ -5,28 +5,37 @@ var login = new Login();
 $(document).ready(function() {
 	$('.alert .close').click(function() {
 
-		   $(this).closest('.alert').hide();
-
-		});
+		$(this).closest('.alert').hide();
+	});
 	
-	  $("#loginBtn").click(function (e) {
-		 $("#passwordErrorId").hide();
-		 var jform = $('#loginForm');
-			//jform.validationEngine({promptPosition:"centerRight", validateNonVisibleFields: true, updatePromptsPosition:true});
-			if(jform.validationEngine('validate'))
-			{
-				userLogin();
-			}else 
-			{
-				$('#loginForm .formError').show(0);
-			}
-	 });
+	$("#loginForm").parsley({
+	 	trigger: 'change',
+        successClass: "has-success",
+        errorClass: "alert alert-danger",
+        classHandler: function (el) {
+        	return el.$element.closest("div").children(".infoArea");
+        },
+		errorsContainer: function (el) {
+			return el.$element.closest("div").children(".infoArea");
+		},
+		errorsWrapper: '<ul></ul>',
+		errorElem: '<li></li>'
+	});
+
+	
+	$("#loginBtn").click(function (e) {
+		$("#passwordErrorId").hide();
+		if($("#loginForm").parsley().validate())
+		{
+		    userLogin();
+		}
+	});
 });
 
 function userLogin()
 {
 	var userLoginTO = new UserLoginTO();
-	userLoginTO.userName =  $("#userName").val();
+	userLoginTO.username =  $("#userName").val();
 	userLoginTO.password =  $("#password").val();
 	MODEL.userEmail = $("#userName").val();
 	var callbackFunction = $.Callbacks('once');
@@ -37,14 +46,15 @@ function userLogin()
 
 function loginSuccessHandler(successJson)
 {
-	if(successJson.userAuthenticated == 'true')
+	if(successJson != "")
     {
    	 	$("#closeBtn").trigger("click");
    	 	$("#rightNavbarID").hide();
 		$("#logoutId").show();
 		MODEL.userLoggedIn = 1;
 		setRegisterServicePage();
-    }else if (successJson.userAuthenticated == 'false')
+		sessionStorage.authToken = successJson;
+    }else
     {
     	$("#passwordErrorId").show();
     }		
@@ -76,8 +86,12 @@ function loginSuccessHandler(successJson)
 				<div class="form-group">
 					<label class="col-lg-3 control-label" for="userName">Email</label>
 					<div class="col-lg-9">
-						<input type="text" class="form-control validate[required]"
-							name="userName" id="userName" />
+						<input type="text" class="form-control"
+							name="userName" id="userName" data-parsley-required
+							data-parsley-type="email" 
+							data-parsley-trigger="change"
+							data-parsley-error-message="Email is Required"/>
+						<div class="infoArea"></div>
 					</div>
 				</div>
 
@@ -91,8 +105,10 @@ function loginSuccessHandler(successJson)
 				<div class="form-group">
 					<label class="col-lg-3 control-label" for="password">Password</label>
 					<div class="col-lg-9">
-						<input type="password" class="form-control validate[required]"
-							name="password" id="password" />
+						<input type="password" class="form-control"
+							name="password" id="password" data-parsley-required
+							data-parsley-error-message="Password is Required"/>
+						<div class="infoArea"></div>
 					</div>
 				</div>
 

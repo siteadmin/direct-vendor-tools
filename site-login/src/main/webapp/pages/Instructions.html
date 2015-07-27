@@ -20,17 +20,18 @@
 			    <p>This Provider test instruction is organized into six sections:</p>
 			    <ul style="margin-left: 0px;">
 			       <li><u>Schedule and Set Up Test with Registered Developer</u> – Provider utilizes information from  “SITE” to schedule a testing time 
-			       	   with Registered Developer, and supplies the Provider’s EHR Trust Anchor(communications conducted directly between 
+			       	   with Registered Developer, and supplies the Provider’s EHR Trust Anchor and Digital Certificate (communications conducted directly between 
 			       	   the Provider and Developer, not through  “SITE”)</li>
 			       <li><u>Receive Test EHR Information</u> – Provider downloads the following Test EHR information from “SITE”
 			          <ul style="margin-left: 0px;">
 			          	<li>Direct Address</li>
 			          	<li>Trust Anchor</li>
+			          	<li>Digital certificate associated with the Direct address</li>
 			          </ul>
 			       </li>
 			       
-			       <li><u>Install Test EHR Trust Anchor</u> – Provider utilizes information from “SITE” to install the Test EHR’s 
-			       	   Trust Anchor</li>
+			       <li><u>Install Test EHR Trust Anchor and Digital Certificate</u> – Provider utilizes information from “SITE” to install the Test EHR’s 
+			       	   Trust Anchor and Digital Certificate</li>
 				   <li><u>Create Summary Care Record</u> – Using test data only (that is, no real, live patient data), Provider creates a Consolidated CDA conformant 
 				   	   summary care record </li>
 				   <li><u>Transmit Direct Message</u> – Provider sends a Direct Message with the Consolidated CDA conformant summary care record to Test EHR</li>
@@ -49,6 +50,7 @@
                            <li>Direct Address</li>
                            <li>Trust Anchor</li>
                            <li>System availability and additional information that can be used by Provider to schedule a test</li>
+                           <li>Digital certificate associated with the Direct address </li>
                          </ul></li> 
                     <li><u>Agree to Principles of Participation</u> – Developer utilizes the “Developer Registration Services” on SITE to agree to principles of 
                     	participation or submits signed form to xvendor.exchange@hhs.gov</li>
@@ -59,8 +61,8 @@
 							<li>Trust Anchor</li>
 							<li>Provider Contact Information</li>
 					   </ul>
-                    <li><u>Install Provider EHR Trust Anchor</u> – Utilizing information supplied by Provider, Registered  Developer 
-                    	installs the Provider EHR’s Trust Anchor </li>
+                    <li><u>Install Provider EHR Trust Anchor and Digital Certificate</u> – Utilizing information supplied by Provider, Registered  Developer 
+                    	installs the Provider EHR’s Trust Anchor and Digital Certificate</li>
 					<li><u>Schedule and Set Up Test with Provider</u> – Registered Developer schedules a testing time with Provider. Testing shall begin within 
 						five days (of scheduled availability) of establishing mutual trust</li>
 					<li><u>Receive Summary Care Record</u> – Registered Developer receives Consolidated CDA conformant summary care record via Direct Message from Provider</li>

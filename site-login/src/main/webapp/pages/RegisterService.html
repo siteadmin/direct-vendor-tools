@@ -27,8 +27,7 @@
 		$('#updateSystemAlertID').hide();
 		$('#DirectSystemRegAlertID').hide();
 		$('#directEmailExistAlertID').hide();
-		$('#registerForm').validationEngine('hideAll');
-		$('#registerForm .formError').hide(0);
+		$("#registerForm").parsley().reset();
 	}
 	
 	function loadInstructionPage()
@@ -66,24 +65,48 @@
 			$('#directSysPanleId').hide();
 		}
 		
+		$("#registerForm").parsley({
+		 	trigger: 'change',
+	        successClass: "has-success",
+	        errorClass: "alert alert-danger",
+	        classHandler: function (el) {
+	        	return el.$element.closest("div").children(".infoArea");
+	        },
+			errorsContainer: function (el) {
+				return el.$element.closest("div").children(".infoArea");
+			},
+			errorsWrapper: '<ul></ul>',
+			errorElem: '<li></li>'
+		});
+		
+		$("#anchoruploadform").parsley({
+		 	trigger: 'change',
+	        successClass: "has-success",
+	        errorClass: "alert alert-danger",
+	        classHandler: function (el) {
+	        	return el.$element.closest("div").children(".infoArea");
+	        },
+			errorsContainer: function (el) {
+				return el.$element.closest("div").children(".infoArea");
+			},
+			errorsWrapper: '<ul></ul>',
+			errorElem: '<li></li>'
+		});
+		
 		$("#submitButton").click(function(e) {
-		   var jform = $('#registerForm');
-		   //jform.validationEngine({promptPosition:"centerRight", validateNonVisibleFields: true, updatePromptsPosition:true});
-		   if (jform.validationEngine('validate')) {
-			   registerService.registerService();
-		   } else {
-			   $('#registerForm .formError').show(0);
+			if($("#registerForm").parsley().validate()){
+				registerService.validateService();
 			}
 		});
 		
 		$("#updateServiceButton").click(function(e) {
-			var jform = $('#registerForm');
-			//jform.validationEngine({promptPosition:"centerRight", validateNonVisibleFields: true, updatePromptsPosition:true});
-			if (jform.validationEngine('validate')) {
-				 registerService.updateService();
-			} else {
-				 $('#registerForm .formError').show(0);
+			if($("#registerForm").parsley().validate()){
+				registerService.updateService();
 			}
+		});
+		
+		$("#anchoruploadsubmit").click(function(e) {
+			$("#anchoruploadform").parsley().validate();
 		});
 	});
 
@@ -249,8 +272,9 @@
 										<label class="col-lg-5 control-label" for="cehrtLabel">Certified EHR Technology </label>
 										<div class="col-lg-7">
 											<input type="text"
-												class="form-control validate[required,maxSize[30]]"
+												class="form-control" data-parsley-required data-parsley-maxlength="30"
 												name="cehrtLabel" id="cehrtLabel" />
+											<div class="infoArea"></div>
 										</div>
 									</div>
 									
@@ -259,8 +283,9 @@
 										<label class="col-lg-5 control-label" for="orgName">Organization Name </label>
 										<div class="col-lg-7">
 											<input type="text"
-												class="form-control validate[required,maxSize[30]]"
+												class="form-control" data-parsley-required data-parsley-maxlength="30"
 												name="orgName" id="orgName" />
+											<div class="infoArea"></div>
 										</div>
 									</div>
 				
@@ -268,8 +293,9 @@
 										<label class="col-lg-5 control-label" for="directEmail">Direct Email Address</label>
 										<div class="col-lg-7">
 											<input type="text"
-												class="form-control validate[required,custom[email]]"
+												class="form-control" data-parsley-required data-parsley-type="email"
 												name="directEmail" id="directEmail" />
+											<div class="infoArea"></div>
 										</div>
 									</div>
 				
@@ -278,8 +304,9 @@
 											Email (This will be used by implementers to contact if there are questions on the Direct System)</label>
 										<div class="col-lg-7">
 											<input type="text"
-												class="form-control validate[required,custom[email],custom[notEqual]]"
+												class="form-control" data-parsley-required data-parsley-type="email" data-parsley-notequal="#directEmail"
 												name="pocEmail" id="pocEmail" />
+											<div class="infoArea"></div>
 										</div>
 									</div>
 				
@@ -288,8 +315,9 @@
 											First Name</label>
 										<div class="col-lg-7">
 											<input type="text"
-												class="form-control validate[required,maxSize[30]]"
+												class="form-control" data-parsley-required data-parsley-maxlength="30"
 												name="pocFirstName" id="pocFirstName" />
+											<div class="infoArea"></div>
 										</div>
 									</div>
 				
@@ -298,15 +326,16 @@
 											Last Name</label>
 										<div class="col-lg-7">
 											<input type="text"
-												class="form-control validate[required,maxSize[30]]"
+												class="form-control" data-parsley-required data-parsley-maxlength="30"
 												name="pocLastName" id="pocLastName" />
+											<div class="infoArea"></div>
 										</div>
 									</div>
 				
 									<div class="form-group">
 										<label class="col-lg-5 control-label" for="timezone">Timezone</label>
 										<div class="col-lg-7">
-											<select name="timezone" class="form-control validate[required]"
+											<select name="timezone" class="form-control" data-parsley-required
 												id="timezone" data-toggle="tooltip" data-placement="right"
 												data-original-title="This is the timezone which indicates availability of the POC from 9am to 5pm"
 												required data-fv-notempty-message="Timezone is required">
@@ -318,6 +347,7 @@
 												<option value="AKST">ALASKA TIME</option>
 												<option value="HST">HAWAII TIME</option>
 											</select>
+											<div class="infoArea"></div>
 										</div>
 									</div>
 				
@@ -329,12 +359,12 @@
 										<legend class="col-lg-5 control-label" style="font-size: inherit; border-bottom: none; font-weight:bold;">Direct Trust
 											Membership</legend>
 										<div class="col-lg-7">
-											<div class="radio">
-												<label for="option_yes">
-												<input type="radio" name="optradio" id="option_yes" value="Yes" class="validate[required]">Yes</label>
-											</div>
-											<div class="radio">
-												<label for="option_no"><input type="radio" name="optradio" id="option_no" class="validate[required]" value="No">No</label>
+											<div>
+												<label for="option_yes" class="radio inline">
+												<input type="radio" name="optradio" id="option_yes" value="Yes" data-parsley-required>Yes</label>
+												<label for="option_no" class="radio inline">
+												<input type="radio" name="optradio" id="option_no" value="No">No</label>
+												<div class="infoArea"></div>
 											</div>
 										</div>
 										</fieldset>
@@ -349,17 +379,22 @@
 												<label class="control-label" for="availFromDate" >Available From (YYYY-MM-DD)</label>
 												<div class="controls">
 														<input type="text"
-															class="date-picker form-control validate[required,custom[date],future[NOW],dateRange[grp1]]"
-															id="availFromDate" name="availFromDate" style="position: relative; z-index: 1100;" /> 
+															class="date-picker form-control" data-parsley-required data-parsley-currentdateval
+															data-parsley-fromdaterangeval="#availToDate"
+															id="availFromDate" name="availFromDate" style="position: relative; z-index: 1100;" />
+														<div class="infoArea"></div> 
 												</div>
+												<div class="infoArea"></div>
 											</div>
 				
 											<div class="control-group">
 												<label class="control-label" for="availToDate">Available To (YYYY-MM-DD)</label>
 												<div class="controls">
 														<input type="text"
-															class="date-picker form-control validate[required,custom[date],future[NOW],dateRange[grp1]]"
-															id="availToDate" name="availToDate" style="position: relative; z-index: 1100;"/> 
+															class="date-picker form-control" data-parsley-required data-parsley-currentdateval 
+										    	   			data-parsley-daterangeval="#availFromDate"
+															id="availToDate" name="availToDate" style="position: relative; z-index: 1100;"/>
+														<div class="infoArea"></div>
 												</div>
 											</div>
 										</div>
@@ -406,25 +441,28 @@
 			<div class="modal-body">
 			
 			<div id="certUploadId">
-					<form id="anchoruploadform" method="POST"
-						enctype="multipart/form-data">
-						<div id="anchoruploaderrorlock" style="position: relative;">
-								<label for="anchoruploadfile">Select one or more Trust Anchor Certificates required to interoperate with the Direct System </label><br/><span
-									class="btn btn-success fileinput-button"
-									id="anchoruploadfile-btn"> <i
-									class="glyphicon glyphicon-plus"></i>&nbsp;<span>Select a Certificate...</span> <input id="anchoruploadfile" type="file"
-										name="anchoruploadfile"
-										class="validate[required, custom[derencncodedfileextension[der|crt|cer|pem|DER|CRT|CER|PEM]], custom[maxCertFileSize]]" />
-									</span>
-									<button id="anchoruploadsubmit" type="submit"
-										class="btn btn-primary primary" onclick="return false;">
-										<i class="glyphicon glyphicon-ok"></i> <span>Submit
-											Anchor</span>
-									</button>
-									<div id="anchoruploadfiles" class="files"></div>
-									<p id="progressText"></p>
-								</div>
-						<br>
+					<form id="anchoruploadform" method="POST" enctype="multipart/form-data">
+				 	   <div class="col-md-12">
+					   		<label for="anchoruploadfile">Select one or more Trust Anchor Certificates required to interoperate with the Direct System </label><br/>
+					   		<span class="btn btn-success fileinput-button" id="anchoruploadfile-btn"> 
+						   		  <i class="glyphicon glyphicon-plus"></i>&nbsp;<span>Select a Certificate...</span> 
+						   		  <input id="anchoruploadfile" type="file" name="anchoruploadfile" data-parsley-required
+						   		  data-parsley-trigger="change" data-parsley-trustfiletypes data-parsley-anchormaxsize="3"/>
+						    </span>
+						    <button id="anchoruploadsubmit" type="submit"
+								    class="btn btn-primary primary" onclick="return false;">
+								    <i class="glyphicon glyphicon-ok"></i> <span>Submit Anchor</span>
+						    </button>
+					        <div id="anchoruploadfiles" class="files"></div>
+					        <p id="progressText"></p>
+					       <!--  <div class="progress" id="anchoruploadprogress">
+  							 	<div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+    								0%
+  							 	</div>
+							</div> -->
+							<div class="infoArea"></div>
+							<br>
+					   </div>
 					</form>
 					<table class="table table-striped">
 					<thead>

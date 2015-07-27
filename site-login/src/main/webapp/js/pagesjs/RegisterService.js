@@ -6,7 +6,29 @@ function RegisterService()
 	this.editingSystemID = 0;
 	this.directEndPoint = "";
 	this.selectedFile = "";
-	this.UPLOAD_FILE = APP_CONTEXT + "rs/fileService/uploadCert?directEndPoint=";
+	this.UPLOAD_FILE = APP_CONTEXT + "uploadCert?directEndPoint=";
+	
+	this.validateService = function()
+	{
+		$('#directEmailExistAlertID').hide();
+		var callbackFunction = $.Callbacks('once');
+		callbackFunction.add(currentObject.validateServiceSuccessHandler);
+		var httpService = new HttpAjaxServices();
+		httpService.validateDirectSystem($("#directEmail").val(), callbackFunction, false);
+	};
+	
+	this.validateServiceSuccessHandler = function(successJson)
+	{
+		if(successJson)
+		{
+			currentObject.registerService();
+			
+		}else 
+		{
+			$('#directEmailExistAlertID').show();
+		}
+	};
+	
 	this.registerService = function()
 	{
 		var callbackFunction = $.Callbacks('once');
@@ -17,7 +39,6 @@ function RegisterService()
 	
 	this.readValues = function()
 	{
-		$('#directEmailExistAlertID').hide();
 		var registerServiceTO = new RegisterServiceTO();
 		registerServiceTO.cehrtLabel =  $("#cehrtLabel").val();
 		registerServiceTO.organizationName =  $("#orgName").val();
@@ -44,17 +65,10 @@ function RegisterService()
 	
 	this.registerServiceSuccessHandler = function(successJson)
 	{
-		if(successJson.booleanOutput)
-		{
 			$("#vendorReg").show();
 			$('#registrationModal').modal('hide');
 			$('#DirectSystemRegAlertID').show();
 			registerService.readUserDirectSystems();
-			
-		}else 
-		{
-			$('#directEmailExistAlertID').show();
-		}
 	};
 	
 	this.updateServiceSuccessHandler = function(successJson)
@@ -82,7 +96,7 @@ function RegisterService()
 	
 	this.readAllDirectSystemsSuccessHandler = function(successJson)
 	{
-		var resultArray = successJson.resultSet.results;
+		var resultArray = successJson;
 		currentObject.resultSet = resultArray;
 		var rows = "";
 		 $(resultArray).each(function(){
@@ -142,7 +156,7 @@ function RegisterService()
 	this.readUserDirectSystemsSuccessHandler = function(successJson)
 	{
 		$("#userDirectSysTableBody").empty();
-		var resultArray = successJson.resultSet.results;
+		var resultArray = successJson;
 		currentObject.resultSet = resultArray;
 		var rows = "";
 		 $(resultArray).each(function(){
@@ -165,9 +179,10 @@ function RegisterService()
 	{
 		currentObject.directEndPoint = $(object).closest('tr').find('td:eq(2)').text();
 		currentObject.uploadBinding(currentObject.directEndPoint);
-		$('#anchoruploadfiles').empty();
+		$("#anchoruploadform").parsley().reset();
 		$('#progressText').html("");
-		$('#anchoruploadform .formError').hide(0);
+		$('#anchoruploadform').trigger('reset');
+		$('#anchoruploadfiles').empty();
 		currentObject.readAllCerts(currentObject.directEndPoint);
 	};
 	
@@ -296,7 +311,7 @@ function RegisterService()
 	{
 		// Change this to the location of your server-side upload handler:
 		var URL = currentObject.UPLOAD_FILE + directEndPoint;
-		$('#anchoruploadprogress').hide();
+		//$('#anchoruploadprogress').hide();
 		$('#anchoruploadfile').fileupload(
 		{
 			url : URL,
@@ -305,42 +320,34 @@ function RegisterService()
 			type : 'POST',
 			contenttype : false,
 			replaceFileInput : false,
+			beforeSend: function(xhr){
+		        xhr.setRequestHeader("X-Auth-Token", sessionStorage.authToken);
+		    },
 			done : function(e, data) {
 				
-				$('#anchoruploadsubmit').unbind("click");
+				$('#anchoruploadform').trigger('reset');
 				$('#anchoruploadfiles').empty();
 				$('#progressText').html("Cert uploaded successfully");
+				$('#anchoruploadsubmit').unbind("click");
 				currentObject.readAllCerts(directEndPoint);
 			},
 			progressall : function(e, data) {
-					var progressval = parseInt(data.loaded / data.total* 100, 10);
-					if (progressval < 99) {
-						$('#anchoruploadwidget .blockMsg .progressorpanel .lbl').text('Uploading...');
-						$('#anchoruploadwidget .blockMsg .progressorpanel .progressor')
-						.text(floorFigure(data.loaded/ data.total* 100, 0).toString()+ "%");
-					} else {
-							$('.blockMsg .progressorpanel .lbl').text('Updating Bundle...');
-							$('.blockMsg .progressorpanel .progressor').text('');
-							}
-				}
+			
+			}
 		}).on('fileuploadadd',function(e, data) {
 			 $('#anchoruploadsubmit').unbind("click");
 			 $('#anchoruploadfiles').empty();
+			 
 			 data.context = $('<div/>').appendTo('#anchoruploadfiles');
 			 $.each(data.files, function(index, file) {
 				var node = $('<p/>').append($('<span/>').text(file.name));
 								node.appendTo(data.context);
 			});
 		    
-			$('#anchoruploadform .formError').hide(0);
-				data.context = $('#anchoruploadsubmit').click(function(e) {
-				var jform = $('#anchoruploadform');
-				if (jform.validationEngine('validate')) {
-						$('#anchoruploadform .formError').hide(0);
-						data.submit();
-				} else {
-						$('#anchoruploadform .formError').show(0);
-						$('#anchoruploadform .anchoruploadfileformError').prependTo('#anchoruploaderrorlock');
+			 $('#anchoruploadsubmit').click(function(e) {
+				 if($("#anchoruploadform").parsley().validate()){
+					   $('#anchoruploadprogress').show();
+					   data.submit();
 				}
 			});
 		}).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
@@ -350,11 +357,9 @@ function RegisterService()
 				e.preventDefault();
 		});
 		$('#anchoruploadfile-btn').bind('click', function(e, data) {
-			$('#anchoruploadform').trigger('reset');
-			$('#anchoruploadsubmit').unbind("click");
-			$('#anchoruploadfiles').empty();
-			$('#anchoruploadform .formError').hide(0);
 			$('#progressText').html("");
+			$('#anchoruploadform').trigger('reset');
+			$('#anchoruploadfiles').empty();
 		});
 	};
 	

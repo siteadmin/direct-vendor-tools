@@ -4,6 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="_csrf" content="${_csrf.token}"/>
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
 <title>Direct Transport Standard Testing Services</title>
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -18,24 +20,21 @@
 
 <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.css" />
 <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.css" />
-<link rel="stylesheet" href="dist/css/formValidation.min.css" />
 <link rel="stylesheet" href="css/custom.css" />
-<link rel="stylesheet" href="css/validationEngine.jquery.css" />
 <link rel="stylesheet" href="css/jquery.fileupload.css" />
+<link rel="stylesheet" href="css/parsley.css" />
+
 <!-- <link rel="stylesheet" href="css/jquery.fileupload-noscript.css" /> -->
 
 <script type="text/javascript" src="vendor/jquery/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="dist/js/formValidation.min.js"></script>
-<script type="text/javascript" src="dist/js/framework/bootstrap.js"></script>
 <script src="js/json2.js" type="text/javascript"></script>
-<script src="js/jquery.validationEngine.js" type="text/javascript"></script>
-<script src="js/jquery.validationEngine-en.js" type="text/javascript"></script>
 <script src="js/jquery.dateFormat.js" type="text/javascript"></script>
 <script src="js/vendor/jquery.ui.widget.js"></script>
 <script src="js/jquery.iframe-transport.js"></script>
 <script src="js/jquery.fileupload.js" type="text/javascript"></script>
 <script src="js/jquery.filestyle.js" type="text/javascript"></script>
+<script src="js/parsley.js" type="text/javascript"></script>
 <script>
 	var APP_CONTEXT = "${pageContext.request.contextPath}/";
 </script>
@@ -57,6 +56,74 @@
 <script>
   
   		$(function(){
+  			
+  			window.ParsleyValidator.addValidator('currentdateval',function(value,requirement){
+  	    		var now = new Date((new Date()).setHours(0, 0, 0, 0));
+  	            var date = new Date(value);
+  	          	var givenDate = new Date(date.getTime() + date.getTimezoneOffset()*60000);
+  	            return givenDate >= now;
+  			},32).addMessage('en','currentdateval','This field should be greater than or equal to current date');
+  			
+  			
+  			window.ParsleyValidator.addValidator('notequal',function(value,requirement){
+  				return value != $( requirement ).val();
+  			},32).addMessage('en','notequal','Direct service email and POC email should not be same.');
+  			
+  			window.ParsleyValidator.addValidator('daterangeval',function(value,requirement){
+  				var requirementVal = $( requirement ).val();
+  				if(requirementVal !=null && requirementVal!='')
+  				{
+  					var date = new Date(value);
+  	            	var date1 = new Date($( requirement ).val());
+  	            	var toDate = new Date(date.getTime() + date.getTimezoneOffset()*60000);
+  	            	var fromDate = new Date(date1.getTime() + date1.getTimezoneOffset()*60000);
+  	            	return toDate > fromDate;
+  				}else
+  				{
+  				    return true;	
+  				}
+  			},32).addMessage('en','daterangeval','Available To Date should be greater than Available From Date.');
+  			
+  			window.ParsleyValidator.addValidator('fromdaterangeval',function(value,requirement){
+  				var requirementVal = $( requirement ).val();
+  				if(requirementVal !=null && requirementVal!='')
+  				{
+  	    			var date = new Date(value);
+  	            	var date1 = new Date($( requirement ).val());
+  	            	var toDate = new Date(date1.getTime() + date.getTimezoneOffset()*60000);
+  	            	var fromDate = new Date(date.getTime() + date1.getTimezoneOffset()*60000);
+  	            	return toDate > fromDate;
+  				}else
+  				{
+  				   return true;	
+  				}
+  			},32).addMessage('en','fromdaterangeval','Available From Date should be lesser than Available To Date.');
+  			
+  			window.ParsleyValidator.addValidator('trustfiletypes',function(value){
+  				var ext=value.split('.').pop().toLowerCase();
+  				
+  				var istrue = false;
+  				if  (ext === 'cer'){
+  					istrue = true;
+  				} else if (ext === 'crt') {
+  					istrue = true;
+  				} else if (ext === 'der') {
+  					istrue = true;
+  				} else if (ext === 'pem') {
+  					istrue = true;
+  				} else if (ext === 'cert') {
+  					istrue = true;
+  				}
+  				
+  				return istrue;
+  			},32).addMessage('en','trustfiletypes','The selected certificate file must be a binary or Base64 encoded file (.cer, .crt, .der, or .pem).');
+  			
+  			// parsley Validator to validate the file size
+  			window.ParsleyValidator.addValidator('anchormaxsize',function(value,requirement){
+  				var file_size=$('#anchoruploadfile')[0].files[0];
+  				return file_size.size < requirement*1024*1024;
+  			},32).addMessage('en','anchormaxsize','The uploaded file size exceeds the maximum file size of 3 MB.');
+  			
   			loadHeaderPage();
   			setInteroperabilityServicesPage();
   			$('#contactUs').click(function(){

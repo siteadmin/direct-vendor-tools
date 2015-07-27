@@ -3,17 +3,37 @@ function AccountRegister()
 {
 	var currentObject = this;
 	
-	this.registerAccount = function()
+	this.checkUserName = function()
 	{
 		$('#emailExistAlertID').hide();
 		$('#emailRegAlertID').hide();
+		var callbackFunction = $.Callbacks('once');
+		callbackFunction.add(currentObject.checkUserNameSuccessHandler);
+		var httpService = new HttpAjaxServices();
+		httpService.checkUsername($("#emailAddress").val(), callbackFunction, false);
+	};
+	
+	this.checkUserNameSuccessHandler = function(successJson)
+	{
+		if(successJson)
+		{
+			currentObject.registerAccount();
+		}else
+		{
+			$('#emailExistAlertID').show();
+		}
+	};
+	
+	
+	this.registerAccount = function()
+	{
 		var accountRegisterTO = new AccountRegisterTO();
 		accountRegisterTO.companyName =  $("#company").val();
 		/*accountRegisterTO.companyPOC =  $("#companyPoc").val();*/
 		accountRegisterTO.firstName =  $("#firstName").val();
 		accountRegisterTO.lastName =  $("#lastName").val();
 		accountRegisterTO.password =  $("#password").val();
-		accountRegisterTO.email =  $("#emailAddress").val();
+		accountRegisterTO.username =  $("#emailAddress").val();
 		
 		var callbackFunction = $.Callbacks('once');
 		callbackFunction.add(currentObject.registerAccountSuccessHandler);
@@ -23,14 +43,7 @@ function AccountRegister()
 	
 	this.registerAccountSuccessHandler = function(successJson)
 	{
-		if(successJson.booleanOutput)
-		{
 			$('#emailRegAlertID').show();
 			document.getElementById("signupForm").reset();
-		}else {
-			
-			$('#emailExistAlertID').show();
-		}
-		
 	};
 }

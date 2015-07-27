@@ -4,22 +4,30 @@
 	$(document).ready(function() {
 		
 		$('.alert .close').click(function() {
-
-			   $(this).closest('.alert').hide();
-
-			});
-
-		$("#submitBtn").click(function(e) {
-			var jform = $('#signupForm');
-			//jform.validationEngine({promptPosition:"centerRight", validateNonVisibleFields: true, updatePromptsPosition:true});
-			if (jform.validationEngine('validate')) {
-				accountRegister.registerAccount();
-			} else {
-				$('#signupForm .formError').show(0);
-			}
+			 $(this).closest('.alert').hide();
+		});
+		
+		$("#signupForm").parsley({
+		 	trigger: 'change',
+	        successClass: "has-success",
+	        errorClass: "alert alert-danger",
+	        classHandler: function (el) {
+	        	return el.$element.closest("div").children(".infoArea");
+	        },
+			errorsContainer: function (el) {
+				return el.$element.closest("div").children(".infoArea");
+			},
+			errorsWrapper: '<ul></ul>',
+			errorElem: '<li></li>'
 		});
 
+		$("#submitBtn").click(function(e) {
+			if($("#signupForm").parsley().validate()){
+				accountRegister.checkUserName();
+			}
+		});
 	});
+
 </script>
 
 <div class="modal-dialog">
@@ -56,9 +64,9 @@
 				<div class="form-group">
 					<label class="col-lg-3 control-label" for="company">Company</label>
 					<div class="col-lg-9">
-						<input type="text"
-							class="form-control validate[required,maxSize[30]]"
-							name="company" id="company" />
+						<input type="text" data-parsley-required data-parsley-maxlength="30"
+							class="form-control" name="company" id="company" />
+						<div class="infoArea"></div>
 					</div>
 				</div>
 
@@ -74,8 +82,9 @@
 					<label class="col-lg-3 control-label" for="firstName">First Name</label>
 					<div class="col-lg-9">
 						<input type="text"
-							class="form-control validate[required,maxSize[30]]"
+							class="form-control" data-parsley-required data-parsley-maxlength="30"
 							name="firstName" id="firstName" />
+						<div class="infoArea"></div>
 					</div>
 				</div>
 
@@ -83,8 +92,9 @@
 					<label class="col-lg-3 control-label" for="lastName">Last Name</label>
 					<div class="col-lg-9">
 						<input type="text"
-							class="form-control validate[required,maxSize[30]]"
+							class="form-control" data-parsley-required data-parsley-maxlength="30"
 							name="lastName" id="lastName" />
+						<div class="infoArea"></div>
 					</div>
 				</div>
 
@@ -93,17 +103,22 @@
 						your username for registering Direct Services)</label>
 					<div class="col-lg-9">
 						<input type="text"
-							class="form-control validate[required,custom[email]]"
+							class="form-control" data-parsley-required data-parsley-type="email"
 							name="emailAddress" id="emailAddress" />
+						<div class="infoArea"></div>
 					</div>
 				</div>
 
 				<div class="form-group">
 					<label class="col-lg-3 control-label" for="password">Password</label>
 					<div class="col-lg-9">
-						<input type="password"
-							class="form-control validate[required,minSize[8],maxSize[30],custom[passwordVal]]"
+						<input type="password" data-parsley-required data-parsley-minlength="8" data-parsley-maxlength="30" 
+							data-parsley-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_\W]).+$/"
+							data-parsley-error-message = "Password should be atleast 8 characters and
+							must contain an Uppercase letter, Lowercase letter, digit, and special character"
+							class="form-control"
 							name="password" id="password" />
+						<div class="infoArea"></div>
 					</div>
 				</div>
 
@@ -111,8 +126,11 @@
 					<label class="col-lg-3 control-label" for="confirmPassword">Confirm Password</label>
 					<div class="col-lg-9">
 						<input type="password"
-							class="form-control validate[required,equals[password],minSize[8],maxSize[30]]"
+							class="form-control" data-parsley-required data-parsley-minlength="8" data-parsley-maxlength="30"
+							data-parsley-error-message = "Confirm password and password should be same."
+							data-parsley-equalto="#password"
 							name="confirmPassword" id="confirmPassword" />
+						<div class="infoArea"></div>
 					</div>
 				</div>
 
@@ -120,7 +138,6 @@
 					<div class="col-lg-9 col-lg-offset-3">
 						<button onclick="return false;" id="submitBtn"
 							class="btn btn-primary">Sign up</button>
-
 					</div>
 				</div>
 			</form>
