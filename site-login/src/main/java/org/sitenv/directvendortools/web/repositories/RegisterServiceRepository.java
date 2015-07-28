@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RegisterServiceRepository extends JpaRepository<DirectTransportTestingService, Long> {
+	
 	List<DirectTransportTestingService> findByUserEmailAddress(String emailAddress);
+	
 	DirectTransportTestingService findByDirectEmailAddress(String directSystemEmailAddress);
 }

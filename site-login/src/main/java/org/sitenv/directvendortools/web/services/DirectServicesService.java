@@ -36,8 +36,24 @@ public class DirectServicesService {
 	
 	public DirectTransportTestingService update(DirectTransportTestingService service)
 	{
-		return registerServiceRepository.save(service);
+		DirectTransportTestingService exisSer =  registerServiceRepository.findOne(service.getId());
+		exisSer.setCehrtLabel(service.getCehrtLabel());
+		exisSer.setOrganizationName(service.getOrganizationName());
+		exisSer.setPointOfContact(service.getPointOfContact());
+		exisSer.setPocFirstName(service.getPocFirstName());
+		exisSer.setPocLastName(service.getPocLastName());
+		exisSer.setTimezone(service.getTimezone());
+		exisSer.setDirectTrustMembership(service.getDirectTrustMembership());
+		exisSer.setAvailFromDate(service.getAvailFromDate());
+		exisSer.setAvailToDate(service.getAvailToDate());
+		return registerServiceRepository.save(exisSer);
 	}
+	
+	public void delete(DirectTransportTestingService service)
+	{
+		registerServiceRepository.delete(service);
+	}
+
 
 	public List<DirectTransportTestingService> findByEmailAddress(String emailAddress) {
 		return registerServiceRepository.findByUserEmailAddress(emailAddress);

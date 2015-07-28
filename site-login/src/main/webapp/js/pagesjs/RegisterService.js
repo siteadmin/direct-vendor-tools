@@ -60,7 +60,7 @@ function RegisterService()
 		var callbackFunction = $.Callbacks('once');
 		callbackFunction.add(currentObject.updateServiceSuccessHandler);
 		var httpService = new HttpAjaxServices();
-		httpService.registerDirectSystem(currentObject.readValues(), callbackFunction, false,false);
+		httpService.updateDirectSystem(currentObject.readValues(), callbackFunction, false);
 	};
 	
 	this.registerServiceSuccessHandler = function(successJson)
@@ -73,16 +73,12 @@ function RegisterService()
 	
 	this.updateServiceSuccessHandler = function(successJson)
 	{
-		if(successJson.booleanOutput)
+		if(successJson)
 		{
 			$("#vendorReg").show();
 			$('#registrationModal').modal('hide');
 			$('#updateSystemAlertID').show();
 			registerService.readUserDirectSystems();
-			
-		}else 
-		{
-			$('#directEmailExistAlertID').show();
 		}
 	};
 	

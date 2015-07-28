@@ -46,7 +46,7 @@ public class DirectServicesController {
 		}
 	}
 
-	@RequestMapping(value = "/directtransporttestingservice", method = RequestMethod.PUT)
+	@RequestMapping(value = "/directtransporttestingservice", method = RequestMethod.POST)
 	public DirectTransportTestingService saveDirectTransportTestingService(@RequestBody DirectTransportTestingService service) {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if (principal instanceof UserDetails) {
@@ -54,6 +54,17 @@ public class DirectServicesController {
 			service.setUserEmailAddress(details.getUsername());
 		}
 		return directService.save(service);
+	}
+	
+	@RequestMapping(value = "/updatedirecttransporttestingservice", method = RequestMethod.PUT)
+	public boolean updateDirectTransportTestingService(@RequestBody DirectTransportTestingService service) {
+		return directService.update(service) != null ? true : false;
+	}
+	
+	@RequestMapping(value = "/deletedirecttransporttestingservice", method = RequestMethod.DELETE)
+	public boolean deleteDirectTransportTestingService(@RequestBody DirectTransportTestingService service) {
+		directService.delete(service);
+		return true;
 	}
 	
 	@RequestMapping(value = "/validatedirecttransporttestingservice", method = RequestMethod.GET)

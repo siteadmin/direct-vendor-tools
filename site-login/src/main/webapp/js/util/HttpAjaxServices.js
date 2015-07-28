@@ -7,7 +7,8 @@ function HttpAjaxServices()
 	this.LOGIN_AUTH = APP_CONTEXT+"userlogin";
 	this.VALIDATE_DIRECT_SYS = APP_CONTEXT + "validatedirecttransporttestingservice?directEmailAddress=";
 	this.REGISTER_DIRECT_SYSTEM = APP_CONTEXT+"directtransporttestingservice";
-	this.UPDATE_DIRECT_SYSTEM = APP_CONTEXT+"updateDirectSystem";
+	this.UPDATE_DIRECT_SYSTEM = APP_CONTEXT+"updatedirecttransporttestingservice";
+	this.DELETE_DIRECT_SYSTEM = APP_CONTEXT+"deletedirecttransporttestingservice";
 	this.READ_ALL_DIRECT_SYSTEM = APP_CONTEXT+"directtransporttestingservice";
 	this.READ_ALL_CERTS = APP_CONTEXT + "readAllCerts?directEndPoint=";
 	this.DOWNLOAD_CERT = APP_CONTEXT+"downloadCert";
@@ -143,9 +144,68 @@ function HttpAjaxServices()
 		{
 			URL = currentObject.UPDATE_DIRECT_SYSTEM;
 		}
-		$.ajax({type:"PUT",
+		$.ajax({type:"POST",
 			data:JSON.stringify(registerServiceTO),
 			url: URL,
+			cache: false,
+			datatype : CONSTANTS.DATA_TYP_JSON,
+			contentType: CONSTANTS.CONTENT_TYP_JSON,
+			beforeSend: function(xhr){
+		        xhr.setRequestHeader("X-Auth-Token", sessionStorage.authToken);
+		    },
+			success:function (successJson, textStatus, oHTTP){
+				callback.fire(successJson); 
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown)
+			{
+				alert("Error Calling Service","Error");
+			}
+		});
+	};
+	
+	
+	this.updateDirectSystem = function(registerServiceTO,callback,freezeScreen)
+	{
+		var utility = new Utility();
+		if(freezeScreen)
+		{
+			if(utility.isEmptyString(screenFreezeMessage))
+			   screenFreezeMessage =  "Processing. Please wait...";
+			   UTILITY.screenFreeze(screenFreezeMessage);
+		}
+		
+		$.ajax({type:"PUT",
+			data:JSON.stringify(registerServiceTO),
+			url: currentObject.UPDATE_DIRECT_SYSTEM,
+			cache: false,
+			datatype : CONSTANTS.DATA_TYP_JSON,
+			contentType: CONSTANTS.CONTENT_TYP_JSON,
+			beforeSend: function(xhr){
+		        xhr.setRequestHeader("X-Auth-Token", sessionStorage.authToken);
+		    },
+			success:function (successJson, textStatus, oHTTP){
+				callback.fire(successJson); 
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown)
+			{
+				alert("Error Calling Service","Error");
+			}
+		});
+	};
+	
+	this.deleteDirectSystem = function(registerServiceTO,callback,freezeScreen)
+	{
+		var utility = new Utility();
+		if(freezeScreen)
+		{
+			if(utility.isEmptyString(screenFreezeMessage))
+			   screenFreezeMessage =  "Processing. Please wait...";
+			   UTILITY.screenFreeze(screenFreezeMessage);
+		}
+		
+		$.ajax({type:"DELETE",
+			data:JSON.stringify(registerServiceTO),
+			url: currentObject.DELETE_DIRECT_SYSTEM,
 			cache: false,
 			datatype : CONSTANTS.DATA_TYP_JSON,
 			contentType: CONSTANTS.CONTENT_TYP_JSON,

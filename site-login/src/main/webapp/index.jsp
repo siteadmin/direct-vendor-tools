@@ -67,7 +67,7 @@
   			
   			window.ParsleyValidator.addValidator('notequal',function(value,requirement){
   				return value != $( requirement ).val();
-  			},32).addMessage('en','notequal','Direct service email and POC email should not be same.');
+  			},32).addMessage('en','notequal','Direct Email Adress and Point Of Contact Email should not be same.');
   			
   			window.ParsleyValidator.addValidator('daterangeval',function(value,requirement){
   				var requirementVal = $( requirement ).val();

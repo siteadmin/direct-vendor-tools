@@ -49,8 +49,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		
 		http.authorizeRequests()
          .antMatchers(HttpMethod.GET,"/validatedirecttransporttestingservice/**").hasRole("USER")
-		 .antMatchers(HttpMethod.PUT,"/directtransporttestingservice").hasRole("USER")
-		 .antMatchers(HttpMethod.PUT,"/directtransporttestingservice").hasRole("USER")
+		 .antMatchers(HttpMethod.POST,"/directtransporttestingservice").hasRole("USER")
+		 .antMatchers(HttpMethod.PUT,"/updatedirecttransporttestingservice").hasRole("USER")
+		 .antMatchers(HttpMethod.DELETE,"/deletedirecttransporttestingservice").hasRole("USER")
 		 .antMatchers(HttpMethod.POST,"/uploadCert").hasRole("USER")
 		 .antMatchers(HttpMethod.GET,"/deleteCert").hasRole("USER")
 		 .anyRequest().permitAll();
