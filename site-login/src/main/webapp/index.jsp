@@ -4,6 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="_csrf" content="${_csrf.token}"/>
+<meta name="_csrf_header" content="${_csrf.headerName}"/>
 <title>Direct Transport Standard Testing Services</title>
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -65,7 +67,7 @@
   			
   			window.ParsleyValidator.addValidator('notequal',function(value,requirement){
   				return value != $( requirement ).val();
-  			},32).addMessage('en','notequal','Direct service email and POC email should not be same.');
+  			},32).addMessage('en','notequal','Direct Email Adress and Point Of Contact Email should not be same.');
   			
   			window.ParsleyValidator.addValidator('daterangeval',function(value,requirement){
   				var requirementVal = $( requirement ).val();
@@ -123,15 +125,31 @@
   			},32).addMessage('en','anchormaxsize','The uploaded file size exceeds the maximum file size of 3 MB.');
   			
   			loadHeaderPage();
-  			setInteroperabilityServicesPage();
+  			if(typeof sessionStorage.userLoggedIn === 'undefined')
+  			{
+  			   sessionStorage.userLoggedIn = 0;	
+  			}
+  			if(sessionStorage.userLoggedIn == 1)
+  			{
+  			   $("#logoutId").show();
+  	  		   $("#rightNavbarID").hide();
+  			   if(sessionStorage.currentPage == 1)
+  			   {
+  				  setInteroperabilityServicesPage();
+  			   }else if (sessionStorage.currentPage == 2)
+  				{
+  				   setRegisterServicePage();
+  				}
+  			}else 
+  		  	 setInteroperabilityServicesPage();
   			$('#contactUs').click(function(){
   			    $(location).attr('href', 'mailto:admin@sitenv.org');
   			});
   		});
   		
   		function setRegisterServicePage(){
-  			
-  			if(MODEL.userLoggedIn == 0)
+  			sessionStorage.currentPage = 2;
+  			if(sessionStorage.userLoggedIn == 0)
   			{
   				$("#rightNavbarID").show();
   			}
@@ -145,8 +163,8 @@
   		}
   		
   		function setInteroperabilityServicesPage(){
-  				
-  			if(MODEL.userLoggedIn == 0)
+  			sessionStorage.currentPage = 1;	
+  			if(sessionStorage.userLoggedIn == 0)
   			{
   				$("#rightNavbarID").hide();
   			}
@@ -191,8 +209,7 @@
   		function onlogout(){
   			$("#logoutId").hide();
   			$("#rightNavbarID").show();
-  			MODEL.userLoggedIn = 0;
-  			MODEL.userEmail = "";
+  			sessionStorage.userLoggedIn = 0;
   			setRegisterServicePage();
   		}
  

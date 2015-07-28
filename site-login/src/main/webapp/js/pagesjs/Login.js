@@ -5,7 +5,7 @@ function Login()
 	this.userLogin = function()
 	{
 		var userLoginTO = new UserLoginTO();
-		userLoginTO.userName =  $("#userName").val();
+		userLoginTO.username =  $("#userName").val();
 		userLoginTO.password =  $("#password").val();
 		
 		var callbackFunction = $.Callbacks('once');

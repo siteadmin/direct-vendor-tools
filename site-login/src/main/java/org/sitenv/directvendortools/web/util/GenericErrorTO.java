@@ -1,11 +1,9 @@
-package org.sitenv.directvendortools.web.dto;
+package org.sitenv.directvendortools.web.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.List;
 
 import org.sitenv.directvendortools.web.util.ApplicationConstants;
-import org.sitenv.directvendortools.web.util.ApplicationException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -23,7 +21,6 @@ public class GenericErrorTO
 
 	private String errorStackTrace;
 
-	private List<FieldErrorTO> fieldErrors;
 
 	/**
 	 * Constructor.
@@ -75,14 +72,6 @@ public class GenericErrorTO
 		this.errorCode = -1;
 	}
 
-	/**
-	 * Constructor.
-	 */
-	public GenericErrorTO(final ApplicationException exception)
-	{
-		this.errorMessage = exception.getMessage();
-		this.errorCode = -1;
-	}
 
 	/**
 	 * @return the errorMessage
@@ -133,23 +122,6 @@ public class GenericErrorTO
 	public void setErrorStackTrace(final String errorStackTrace)
 	{
 		this.errorStackTrace = errorStackTrace;
-	}
-
-	/**
-	 * @return the fieldErrors
-	 */
-	public List<FieldErrorTO> getFieldErrors()
-	{
-		return fieldErrors;
-	}
-
-	/**
-	 * @param fieldErrors
-	 *            the fieldErrors to set
-	 */
-	public void setFieldErrors(final List<FieldErrorTO> fieldErrors)
-	{
-		this.fieldErrors = fieldErrors;
 	}
 
 	/**

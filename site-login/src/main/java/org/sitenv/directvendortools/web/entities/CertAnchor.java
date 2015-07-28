@@ -1,6 +1,7 @@
-package org.sitenv.directvendortools.web.dto;
+package org.sitenv.directvendortools.web.entities;
 
-public class CertAnchorTO {
+
+public class CertAnchor {
 	
 	private String certFile;
 	private String uploadedTimeStamp;

@@ -7,6 +7,9 @@
 			 $(this).closest('.alert').hide();
 		});
 		
+		$('#fieldsRequireID').show();
+		$('#signupForm').show();
+		
 		$("#signupForm").parsley({
 		 	trigger: 'change',
 	        successClass: "has-success",
@@ -23,7 +26,7 @@
 
 		$("#submitBtn").click(function(e) {
 			if($("#signupForm").parsley().validate()){
-				accountRegister.registerAccount();
+				accountRegister.checkUserName();
 			}
 		});
 	});
@@ -57,9 +60,10 @@
 				Email Registered Successfully!! Please log in by using Login button.
 			</div>
 			
-			<div style="padding-bottom: 15px;">
+			<div id="fieldsRequireID" style="padding-bottom: 15px;">
 				<h4 style="text-align: center">* All fields are required</h4>
 			</div>
+			
 			<form id="signupForm" method="post" class="form-horizontal">
 				<div class="form-group">
 					<label class="col-lg-3 control-label" for="company">Company</label>

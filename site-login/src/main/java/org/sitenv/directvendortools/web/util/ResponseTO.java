@@ -1,16 +1,14 @@
-package org.sitenv.directvendortools.web.dto;
+package org.sitenv.directvendortools.web.util;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import org.sitenv.directvendortools.web.util.ApplicationConstants;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias(ApplicationConstants.RESPONSE)
 public class ResponseTO
 {
 
-	@XStreamAsAttribute
 	private int returnCode;
 
 	private ResultSetTO resultSet;
@@ -18,8 +16,6 @@ public class ResponseTO
 	private int insertQueryStatus;
 
 	private GenericErrorTO error;
-	
-	private UserLoginTO userLoginTo;
 	
 	private boolean booleanOutput = true;
 	
@@ -49,12 +45,6 @@ public class ResponseTO
 		this.userAuthenticated = userAuthenticated;
 	}
 
-	public ResponseTO (UserLoginTO userLoginTo)
-	{
-		this.userLoginTo = userLoginTo;
-	}
-	
-	
 	public ResponseTO (boolean booleanOutput)
 	{
 		this.booleanOutput = booleanOutput;
@@ -137,13 +127,4 @@ public class ResponseTO
 		this.booleanOutput = booleanOutput;
 	}
 
-	public UserLoginTO getUserLoginTo() {
-		return userLoginTo;
-	}
-
-	public void setUserLoginTo(UserLoginTO userLoginTo) {
-		this.userLoginTo = userLoginTo;
-	}
-	
-	
 }

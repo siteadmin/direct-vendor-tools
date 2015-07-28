@@ -4,7 +4,7 @@ function AccountRegisterTO()
 	this.companyPOC;
 	this.firstName;
 	this.lastName;
-	this.userName;
+	this.username;
 	this.password;
 	this.email;
 }

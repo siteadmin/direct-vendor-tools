@@ -55,7 +55,7 @@
 			loadInstructionPage();
 		});
 		
-		if (MODEL.userLoggedIn == 1) {
+		if (sessionStorage.userLoggedIn == 1) {
 			$('#vendorReg').show();
 		    $('#directSysPanleId').show();
 			registerService.readUserDirectSystems();
@@ -95,7 +95,7 @@
 		
 		$("#submitButton").click(function(e) {
 			if($("#registerForm").parsley().validate()){
-				registerService.registerService();
+				registerService.validateService();
 			}
 		});
 		
@@ -442,7 +442,7 @@
 			
 			<div id="certUploadId">
 					<form id="anchoruploadform" method="POST" enctype="multipart/form-data">
-				 	   <div class="col-md-12">
+				 	   <div>
 					   		<label for="anchoruploadfile">Select one or more Trust Anchor Certificates required to interoperate with the Direct System </label><br/>
 					   		<span class="btn btn-success fileinput-button" id="anchoruploadfile-btn"> 
 						   		  <i class="glyphicon glyphicon-plus"></i>&nbsp;<span>Select a Certificate...</span> 
