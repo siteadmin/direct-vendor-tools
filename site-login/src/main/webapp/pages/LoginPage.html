@@ -9,7 +9,6 @@ $(document).ready(function() {
 	});
 	
 	$("#loginForm").parsley({
-	 	trigger: 'change',
         successClass: "has-success",
         errorClass: "alert alert-danger",
         classHandler: function (el) {
@@ -87,8 +86,7 @@ function loginSuccessHandler(successJson)
 					<div class="col-lg-9">
 						<input type="text" class="form-control"
 							name="userName" id="userName" data-parsley-required
-							data-parsley-type="email" 
-							data-parsley-trigger="change"/>
+							data-parsley-type="email"/>
 						<div class="infoArea"></div>
 					</div>
 				</div>
